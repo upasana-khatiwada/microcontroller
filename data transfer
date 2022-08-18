@@ -1,0 +1,12 @@
+MOV A, #55h ; load vaue 55h into register A
+MOV R0, A; copy contents of A into R0
+	;(now A=R0=55H)
+MOV R1, A; copy contents of A into R1
+			;(now A=R0=55H)
+MOV R2, A; copy contnts of A into R2
+		; now A=R0=R1=R2=55H)
+MOV R3, #95h; load value 95h into R3
+		;(now R3=95H)
+MOV A, R3;copy contents of R3 into A
+		;now A=R3=95H
+END
