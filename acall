@@ -4,7 +4,7 @@ BACK: MOV A,#55H
 	ACALL DELAY; time delay
 	CPL A; complement reg A
 	SJMP BACK; keep doing this indefinitely this is the delay subroutine
-	ORG 300H
+
 DELAY: MOV R5, #0FFH
 AGAIN: DJNZ R5, AGAIN; Stay here until R5 becomes 0
 	RET ; return to caller
