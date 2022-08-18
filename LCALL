@@ -1,0 +1,13 @@
+ORG 0
+BACK: MOV A,#55H ;lead A with 55h
+      MOV P1,A ;send 55H to port 1
+      LCALL DELAY ;load A with AA(in hex)
+      MOV A, #0AAH ;SEND AAH to port 1
+      MOV P1,A
+      LCALL DELAY
+      SJMP BACK ;keep doing this indefinitely this is the delay subroutine
+      ORG 300H
+DELAY:MOV R5,#0FFH ;R5=225(FFin hex), the counter
+AGAIN:DJNZ R5, AGAIN ;stay here until R5 becomes 0
+      RET ;return to caller
+      END ;end of asm file
