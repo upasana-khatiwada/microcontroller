@@ -56,6 +56,11 @@ myservo1.write(100);
 flag1=0, flag2=0;
 }
 
+
+
+
+//https://www.youtube.com/watch?v=0i-9_aK2f-Y&t=97s&ab_channel=MuhammadAnsar
+
 lcd.setCursor (0,0);
 lcd.print("Total Space: ");
 lcd.print(Total);
