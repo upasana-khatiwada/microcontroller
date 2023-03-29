@@ -1,0 +1,95 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+// Pin assignments
+const int IR_IN_PIN = 2;
+const int IR_OUT_PIN = 3;
+const int PARKING_PIN_1 = 4;
+const int PARKING_PIN_2 = 5;
+const int PARKING_PIN_3 = 6;
+const int PARKING_PIN_4 = 7;
+
+// LCD display object
+LiquidCrystal_I2C lcd(0x3F, 16, 2);  // Set the LCD address to 0x3F for a 16x2 display
+
+// Variables to keep track of parking availability
+int numAvailable = 4;
+
+void setup() {
+  // Initialize pins
+  pinMode(IR_IN_PIN, INPUT);
+  pinMode(IR_OUT_PIN, INPUT);
+  pinMode(PARKING_PIN_1, INPUT);
+  pinMode(PARKING_PIN_2, INPUT);
+  pinMode(PARKING_PIN_3, INPUT);
+  pinMode(PARKING_PIN_4, INPUT);
+
+  // Initialize LCD display
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print("Parking Spaces:");
+  lcd.setCursor(0, 1);
+  lcd.print(numAvailable);
+}
+
+void loop() {
+  // Check if there is a car entering
+  if (digitalRead(IR_IN_PIN) == HIGH) {
+    // Check if there are any available parking spaces
+    if (numAvailable > 0) {
+      // Find the first available parking spot and occupy it
+      if (digitalRead(PARKING_PIN_1) == LOW) {
+        digitalWrite(PARKING_PIN_1, HIGH);
+        numAvailable--;
+      }
+      else if (digitalRead(PARKING_PIN_2) == LOW) {
+        digitalWrite(PARKING_PIN_2, HIGH);
+        numAvailable--;
+      }
+      else if (digitalRead(PARKING_PIN_3) == LOW) {
+        digitalWrite(PARKING_PIN_3, HIGH);
+        numAvailable--;
+      }
+      else if (digitalRead(PARKING_PIN_4) == LOW) {
+        digitalWrite(PARKING_PIN_4, HIGH);
+        numAvailable--;
+      }
+    }
+
+    // Update LCD display
+    lcd.setCursor(0, 1);
+    lcd.print(numAvailable);
+
+    delay(500);  // debounce delay
+  }
+
+  // Check if there is a car leaving
+  if (digitalRead(IR_OUT_PIN) == HIGH) {
+    // Find the first occupied parking spot and vacate it
+    if (digitalRead(PARKING_PIN_1) == HIGH) {
+      digitalWrite(PARKING_PIN_1, LOW);
+      numAvailable++;
+    }
+    else if (digitalRead(PARKING_PIN_2) == HIGH) {
+      digitalWrite(PARKING_PIN_2, LOW);
+      numAvailable++;
+    }
+    else if (digitalRead(PARKING_PIN_3) == HIGH) {
+      digitalWrite(PARKING_PIN_3, LOW);
+      numAvailable++;
+    }
+    else if (digitalRead(PARKING_PIN_4) == HIGH) {
+      digitalWrite(PARKING_PIN_4, LOW);
+      numAvailable++;
+    }
+
+    // Update LCD display
+    lcd.setCursor(0, 1);
+    lcd.print(numAvailable);
+
+    delay(500);  // debounce delay
+  }
+
+  // Check if all parking spots are occupied
+  if (numAvailable == 0
