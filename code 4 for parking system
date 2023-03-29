@@ -1,0 +1,104 @@
+#include <LiquidCrystal.h>
+
+// initialize LCD display
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+// initialize IR sensors
+int irIn = 6;   // IR sensor for car entering
+int irOut = 7;  // IR sensor for car exiting
+int ir1 = 8;    // IR sensor for parking slot 1
+int ir2 = 9;    // IR sensor for parking slot 2
+int ir3 = 10;   // IR sensor for parking slot 3
+int ir4 = 11;   // IR sensor for parking slot 4
+
+// initialize servo motor
+#include <Servo.h>
+Servo servo;
+int servoPin = 13;  // servo motor pin
+
+// initialize parking slots
+int slot1 = 0;
+int slot2 = 0;
+int slot3 = 0;
+int slot4 = 0;
+
+void setup() {
+  // initialize LCD display
+  lcd.begin(16, 2);
+  lcd.print("Available Slots:");
+  
+  // initialize IR sensors
+  pinMode(irIn, INPUT);
+  pinMode(irOut, INPUT);
+  pinMode(ir1, INPUT);
+  pinMode(ir2, INPUT);
+  pinMode(ir3, INPUT);
+  pinMode(ir4, INPUT);
+  
+  // initialize servo motor
+  servo.attach(servoPin);
+}
+
+void loop() {
+  // read IR sensors
+  int in = digitalRead(irIn);
+  int out = digitalRead(irOut);
+  int sensor1 = digitalRead(ir1);
+  int sensor2 = digitalRead(ir2);
+  int sensor3 = digitalRead(ir3);
+  int sensor4 = digitalRead(ir4);
+
+  // check if car enters
+  if (in == HIGH) {
+    servo.write(90);  // servo motor lifts the toll gate
+    delay(1000);      // wait for the car to enter
+    servo.write(0);   // servo motor lowers the toll gate
+    
+    // update available slots
+    if (slot1 == 0) {
+      slot1 = 1;
+    }
+    else if (slot2 == 0) {
+      slot2 = 1;
+    }
+    else if (slot3 == 0) {
+      slot3 = 1;
+    }
+    else if (slot4 == 0) {
+      slot4 = 1;
+    }
+  }
+
+  // check if car exits
+  if (out == HIGH) {
+    servo.write(90);  // servo motor lifts the toll gate
+    delay(1000);      // wait for the car to exit
+    servo.write(0);   // servo motor lowers the toll gate
+    
+    // update available slots
+    if (slot1 == 1) {
+      slot1 = 0;
+    }
+    else if (slot2 == 1) {
+      slot2 = 0;
+    }
+    else if (slot3 == 1) {
+      slot3 = 0;
+    }
+    else if (slot4 == 1) {
+      slot4 = 0;
+    }
+  }
+
+  // display available slots on LCD
+  int availableSlots = slot1 + slot2 + slot3 + slot4;
+  lcd.setCursor(0, 1);
+  lcd.print(availableSlots);
+  
+  if (availableSlots == 0) {
+    lcd.print(" PARKING FULL  ");
+  }
+  
+  // delay for stability
+  delay(100);
+}
