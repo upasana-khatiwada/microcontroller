@@ -1,0 +1,103 @@
+#include <LiquidCrystal.h>
+
+// initialize the IR sensor pins
+int irIn = 2; // car entrance
+int irOut = 3; // car exit
+int irPark1 = 4; // parking slot 1
+int irPark2 = 5; // parking slot 2
+int irPark3 = 6; // parking slot 3
+int irPark4 = 7; // parking slot 4
+
+// initialize the motor pins
+int motorIn = 8; // car entrance
+int motorOut = 9; // car exit
+
+// initialize the LCD display pins
+LiquidCrystal lcd(12, 11, 10, 5, 4, 3, 2);
+
+// initialize the parking slot counters
+int park1Count = 0;
+int park2Count = 0;
+int park3Count = 0;
+int park4Count = 0;
+
+void setup() {
+  // set IR sensor pins as inputs
+  pinMode(irIn, INPUT);
+  pinMode(irOut, INPUT);
+  pinMode(irPark1, INPUT);
+  pinMode(irPark2, INPUT);
+  pinMode(irPark3, INPUT);
+  pinMode(irPark4, INPUT);
+
+  // set motor pins as outputs
+  pinMode(motorIn, OUTPUT);
+  pinMode(motorOut, OUTPUT);
+
+  // initialize the LCD display
+  lcd.begin(16, 2);
+}
+
+void loop() {
+  // detect car entrance
+  if (digitalRead(irIn) == HIGH) {
+    // move motor up
+    digitalWrite(motorIn, HIGH);
+
+    // update parking slot counters
+    if (park1Count == 0) {
+      park1Count = 1;
+    } else if (park2Count == 0) {
+      park2Count = 1;
+    } else if (park3Count == 0) {
+      park3Count = 1;
+    } else if (park4Count == 0) {
+      park4Count = 1;
+    }
+  }
+
+  // detect car exit
+  if (digitalRead(irOut) == HIGH) {
+    // move motor up
+    digitalWrite(motorOut, HIGH);
+
+    // update parking slot counters
+    if (park1Count == 1) {
+      park1Count = 0;
+    } else if (park2Count == 1) {
+      park2Count = 0;
+    } else if (park3Count == 1) {
+      park3Count = 0;
+    } else if (park4Count == 1) {
+      park4Count = 0;
+    }
+  }
+
+  // display parking slot information on LCD display
+  lcd.setCursor(0, 0);
+  lcd.print("Parking: ");
+  lcd.setCursor(0, 1);
+  if (park1Count == 0) {
+    lcd.print("1: Available ");
+  } else {
+    lcd.print("1: Occupied  ");
+  }
+  if (park2Count == 0) {
+    lcd.print("2: Available ");
+  } else {
+    lcd.print("2: Occupied  ");
+  }
+  lcd.setCursor(0, 2);
+  if (park3Count == 0) {
+    lcd.print("3: Available ");
+  } else {
+    lcd.print("3: Occupied  ");
+  }
+  if (park4Count == 0) {
+    lcd.print("4: Available ");
+  } else {
+    lcd.print("4: Occupied  ");
+  }
+
+  // check if parking is full
+  if (park1Count == 1 && park2
